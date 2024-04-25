@@ -9,6 +9,7 @@ import (
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
 
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -59,6 +60,7 @@ type BaseKeeper struct {
 	ak                     types.AccountKeeper
 	cdc                    codec.BinaryCodec
 	storeService           store.KVStoreService
+	tKey                   *storetypes.TransientStoreKey
 	mintCoinsRestrictionFn types.MintingRestrictionFn
 	logger                 log.Logger
 }
@@ -84,6 +86,7 @@ func (k BaseKeeper) GetPaginatedTotalSupply(ctx context.Context, pagination *que
 func NewBaseKeeper(
 	cdc codec.BinaryCodec,
 	storeService store.KVStoreService,
+	tStoreKey *storetypes.TransientStoreKey,
 	ak types.AccountKeeper,
 	blockedAddrs map[string]bool,
 	authority string,
@@ -101,6 +104,7 @@ func NewBaseKeeper(
 		ak:                     ak,
 		cdc:                    cdc,
 		storeService:           storeService,
+		tKey:                   tStoreKey,
 		mintCoinsRestrictionFn: types.NoOpMintingRestrictionFn,
 		logger:                 logger,
 	}
