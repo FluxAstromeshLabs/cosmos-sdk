@@ -10,21 +10,21 @@ import "amino/amino.proto";
 option go_package = "github.com/cosmos/cosmos-sdk/x/bank/types";
 
 message AccountBalance {
-    bytes account = 1 [json_name="a,omitempty"];
-    string balance = 2 [
-        json_name              = "b,omitempty",
-        (cosmos_proto.scalar)  = "cosmos.Int",
-        (gogoproto.customtype) = "cosmossdk.io/math.Int",
-        (gogoproto.nullable)   = false,
-        (amino.dont_omitempty) = true
-    ]
+  bytes  account = 1 [json_name = "a,omitempty"];
+  string balance = 2 [
+    json_name              = "b,omitempty",
+    (cosmos_proto.scalar)  = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable)   = false,
+    (amino.dont_omitempty) = true
+  ];
 }
 
 message DenomBalanceUpdate {
-    string denom = 1 [json_name="d,omitempty"];
-    repeated AccountBalance balances [json_name="bs,omitempty"];
+  string                  denom    = 1 [json_name = "d,omitempty"];
+  repeated AccountBalance balances = 2 [json_name = "bs,omitempty"];
 }
 
 message BalanceUpdate {
-    DenomBalanceUpdate updates = 1 [json_name="u,omitempty"];
+  DenomBalanceUpdate updates = 1 [json_name = "u,omitempty"];
 }
