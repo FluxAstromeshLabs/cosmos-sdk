@@ -46,6 +46,7 @@ type Keeper interface {
 	UndelegateCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
 	MintCoins(ctx context.Context, moduleName string, amt sdk.Coins) error
 	BurnCoins(ctx context.Context, moduleName string, amt sdk.Coins) error
+	EndBlocker(ctx context.Context) error
 
 	DelegateCoins(ctx context.Context, delegatorAddr, moduleAccAddr sdk.AccAddress, amt sdk.Coins) error
 	UndelegateCoins(ctx context.Context, moduleAccAddr, delegatorAddr sdk.AccAddress, amt sdk.Coins) error
@@ -86,7 +87,6 @@ func (k BaseKeeper) GetPaginatedTotalSupply(ctx context.Context, pagination *que
 func NewBaseKeeper(
 	cdc codec.BinaryCodec,
 	storeService store.KVStoreService,
-	tStoreKey *storetypes.TransientStoreKey,
 	ak types.AccountKeeper,
 	blockedAddrs map[string]bool,
 	authority string,
@@ -104,10 +104,24 @@ func NewBaseKeeper(
 		ak:                     ak,
 		cdc:                    cdc,
 		storeService:           storeService,
-		tKey:                   tStoreKey,
 		mintCoinsRestrictionFn: types.NoOpMintingRestrictionFn,
 		logger:                 logger,
 	}
+}
+
+func NewBaseKeeperWithTransient(
+	cdc codec.BinaryCodec,
+	storeService store.KVStoreService,
+	tKey *storetypes.TransientStoreKey,
+	ak types.AccountKeeper,
+	blockedAddrs map[string]bool,
+	authority string,
+	logger log.Logger,
+) BaseKeeper {
+	baseK := NewBaseKeeper(cdc, storeService, ak, blockedAddrs, authority, logger)
+	baseK.BaseSendKeeper.tKey = tKey
+	baseK.tKey = tKey
+	return baseK
 }
 
 // WithMintCoinsRestriction restricts the bank Keeper used within a specific module to

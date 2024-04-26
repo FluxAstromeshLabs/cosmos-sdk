@@ -10,6 +10,7 @@ import (
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
 
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -59,6 +60,7 @@ type BaseSendKeeper struct {
 	cdc          codec.BinaryCodec
 	ak           types.AccountKeeper
 	storeService store.KVStoreService
+	tKey         *storetypes.TransientStoreKey
 	logger       log.Logger
 
 	// list of addresses that are restricted from receiving transactions
@@ -93,6 +95,20 @@ func NewBaseSendKeeper(
 		logger:          logger,
 		sendRestriction: newSendRestriction(),
 	}
+}
+
+func NewBaseSendKeeperWithTransientStore(
+	cdc codec.BinaryCodec,
+	storeService store.KVStoreService,
+	ak types.AccountKeeper,
+	tKey *storetypes.TransientStoreKey,
+	blockedAddrs map[string]bool,
+	authority string,
+	logger log.Logger,
+) BaseSendKeeper {
+	bsk := NewBaseSendKeeper(cdc, storeService, ak, blockedAddrs, authority, logger)
+	bsk.tKey = tKey
+	return bsk
 }
 
 // AppendSendRestriction adds the provided SendRestrictionFn to run after previously provided restrictions.
@@ -337,6 +353,23 @@ func (k BaseSendKeeper) setBalance(ctx context.Context, addr sdk.AccAddress, bal
 		}
 		return nil
 	}
+
+	pk := collections.Join(addr, balance.Denom)
+	sz := k.Balances.KeyCodec().Size(pk)
+	bz := make([]byte, sz)
+	_, err := k.Balances.KeyCodec().Encode(bz, pk)
+	if err != nil {
+		return err
+	}
+
+	valueBz, err := k.Balances.ValueCodec().Encode(balance.Amount)
+	if err != nil {
+		return err
+	}
+
+	if k.tKey != nil {
+		sdk.UnwrapSDKContext(ctx).TransientStore(k.tKey).Set(bz, valueBz)
+	}
 	return k.Balances.Set(ctx, collections.Join(addr, balance.Denom), balance.Amount)
 }
 
@@ -466,6 +499,10 @@ func (k BaseSendKeeper) getSendEnabledOrDefault(ctx context.Context, denom strin
 	}
 
 	return defaultVal
+}
+
+func (k *BaseSendKeeper) SetTransientKey(tKey *storetypes.TransientStoreKey) {
+	k.tKey = tKey
 }
 
 // sendRestriction is a struct that houses a SendRestrictionFn.

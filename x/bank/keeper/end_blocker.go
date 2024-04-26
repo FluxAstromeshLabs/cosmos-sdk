@@ -1,22 +1,34 @@
 package keeper
 
 import (
+	"context"
 	"fmt"
 
-	"cosmossdk.io/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
-func (k BaseKeeper) EndBlocker(ctx sdk.Context) {
-	fmt.Println("bank end blocker runs")
-	store := ctx.TransientStore(k.tKey)
-	pref := prefix.NewStore(store, types.BalancesPrefix)
-	itr := pref.Iterator(nil, nil)
+func (k BaseKeeper) EndBlocker(ctx context.Context) error {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.TransientStore(k.tKey)
+	itr := store.Iterator(nil, nil)
+	defer itr.Close()
+
+	keyCdc, valueCdc := k.Balances.KeyCodec(), k.Balances.ValueCodec()
 	for itr.Valid() {
-		k := itr.Key()
-		v := itr.Value()
-		fmt.Println("k:", k, "v:", v)
+		key := itr.Key()
+		value := itr.Value()
+		_, p, err := keyCdc.Decode(key)
+		if err != nil {
+			panic(err)
+		}
+
+		v, err := valueCdc.Decode(value)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println("address:", p.K1().String(), "denom:", p.K2(), "=> balance:", v.String())
 		itr.Next()
 	}
+	return nil
 }
