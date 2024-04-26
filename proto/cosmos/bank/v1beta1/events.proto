@@ -26,5 +26,5 @@ message DenomBalanceUpdate {
 }
 
 message BalanceUpdate {
-  DenomBalanceUpdate updates = 1 [json_name = "u,omitempty"];
+  repeated DenomBalanceUpdate updates = 1 [json_name = "u,omitempty"];
 }
