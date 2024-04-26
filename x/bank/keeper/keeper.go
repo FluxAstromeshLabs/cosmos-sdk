@@ -54,6 +54,8 @@ type Keeper interface {
 	types.QueryServer
 }
 
+type EndBlockerCallback func(*BaseKeeper, context.Context) error
+
 // BaseKeeper manages transfers between accounts. It implements the Keeper interface.
 type BaseKeeper struct {
 	BaseSendKeeper
@@ -61,9 +63,10 @@ type BaseKeeper struct {
 	ak                     types.AccountKeeper
 	cdc                    codec.BinaryCodec
 	storeService           store.KVStoreService
-	tKey                   *storetypes.TransientStoreKey
+	balanceTKey            *storetypes.TransientStoreKey
 	mintCoinsRestrictionFn types.MintingRestrictionFn
 	logger                 log.Logger
+	endBlockerCb           func(*BaseKeeper, context.Context) error
 }
 
 // GetPaginatedTotalSupply queries for the supply, ignoring 0 coins, with a given pagination
@@ -109,19 +112,25 @@ func NewBaseKeeper(
 	}
 }
 
-func NewBaseKeeperWithTransient(
+func NewBaseKeeperWithBalanceUpdateStore(
 	cdc codec.BinaryCodec,
 	storeService store.KVStoreService,
-	tKey *storetypes.TransientStoreKey,
+	balanceTKey *storetypes.TransientStoreKey,
 	ak types.AccountKeeper,
 	blockedAddrs map[string]bool,
 	authority string,
 	logger log.Logger,
+	endBlockerCb EndBlockerCallback,
 ) BaseKeeper {
 	baseK := NewBaseKeeper(cdc, storeService, ak, blockedAddrs, authority, logger)
-	baseK.BaseSendKeeper.tKey = tKey
-	baseK.tKey = tKey
+	baseK.BaseSendKeeper.balanceTKey = balanceTKey
+	baseK.balanceTKey = balanceTKey
+	baseK.endBlockerCb = endBlockerCb
 	return baseK
+}
+
+func (k BaseKeeper) GetBalanceUpdateStore() *storetypes.TransientStoreKey {
+	return k.balanceTKey
 }
 
 // WithMintCoinsRestriction restricts the bank Keeper used within a specific module to
