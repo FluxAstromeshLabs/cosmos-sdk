@@ -19,14 +19,14 @@ import (
 
 var (
 	md_AccountBalance         protoreflect.MessageDescriptor
-	fd_AccountBalance_account protoreflect.FieldDescriptor
+	fd_AccountBalance_acc     protoreflect.FieldDescriptor
 	fd_AccountBalance_balance protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_cosmos_bank_v1beta1_events_proto_init()
 	md_AccountBalance = File_cosmos_bank_v1beta1_events_proto.Messages().ByName("AccountBalance")
-	fd_AccountBalance_account = md_AccountBalance.Fields().ByName("account")
+	fd_AccountBalance_acc = md_AccountBalance.Fields().ByName("acc")
 	fd_AccountBalance_balance = md_AccountBalance.Fields().ByName("balance")
 }
 
@@ -95,9 +95,9 @@ func (x *fastReflection_AccountBalance) Interface() protoreflect.ProtoMessage {
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_AccountBalance) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if len(x.Account) != 0 {
-		value := protoreflect.ValueOfBytes(x.Account)
-		if !f(fd_AccountBalance_account, value) {
+	if len(x.Acc) != 0 {
+		value := protoreflect.ValueOfBytes(x.Acc)
+		if !f(fd_AccountBalance_acc, value) {
 			return
 		}
 	}
@@ -122,8 +122,8 @@ func (x *fastReflection_AccountBalance) Range(f func(protoreflect.FieldDescripto
 // a repeated field is populated if it is non-empty.
 func (x *fastReflection_AccountBalance) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "cosmos.bank.v1beta1.AccountBalance.account":
-		return len(x.Account) != 0
+	case "cosmos.bank.v1beta1.AccountBalance.acc":
+		return len(x.Acc) != 0
 	case "cosmos.bank.v1beta1.AccountBalance.balance":
 		return x.Balance != ""
 	default:
@@ -142,8 +142,8 @@ func (x *fastReflection_AccountBalance) Has(fd protoreflect.FieldDescriptor) boo
 // Clear is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_AccountBalance) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "cosmos.bank.v1beta1.AccountBalance.account":
-		x.Account = nil
+	case "cosmos.bank.v1beta1.AccountBalance.acc":
+		x.Acc = nil
 	case "cosmos.bank.v1beta1.AccountBalance.balance":
 		x.Balance = ""
 	default:
@@ -162,8 +162,8 @@ func (x *fastReflection_AccountBalance) Clear(fd protoreflect.FieldDescriptor) {
 // of the value; to obtain a mutable reference, use Mutable.
 func (x *fastReflection_AccountBalance) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "cosmos.bank.v1beta1.AccountBalance.account":
-		value := x.Account
+	case "cosmos.bank.v1beta1.AccountBalance.acc":
+		value := x.Acc
 		return protoreflect.ValueOfBytes(value)
 	case "cosmos.bank.v1beta1.AccountBalance.balance":
 		value := x.Balance
@@ -188,8 +188,8 @@ func (x *fastReflection_AccountBalance) Get(descriptor protoreflect.FieldDescrip
 // Set is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_AccountBalance) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "cosmos.bank.v1beta1.AccountBalance.account":
-		x.Account = value.Bytes()
+	case "cosmos.bank.v1beta1.AccountBalance.acc":
+		x.Acc = value.Bytes()
 	case "cosmos.bank.v1beta1.AccountBalance.balance":
 		x.Balance = value.Interface().(string)
 	default:
@@ -212,8 +212,8 @@ func (x *fastReflection_AccountBalance) Set(fd protoreflect.FieldDescriptor, val
 // Mutable is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_AccountBalance) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "cosmos.bank.v1beta1.AccountBalance.account":
-		panic(fmt.Errorf("field account of message cosmos.bank.v1beta1.AccountBalance is not mutable"))
+	case "cosmos.bank.v1beta1.AccountBalance.acc":
+		panic(fmt.Errorf("field acc of message cosmos.bank.v1beta1.AccountBalance is not mutable"))
 	case "cosmos.bank.v1beta1.AccountBalance.balance":
 		panic(fmt.Errorf("field balance of message cosmos.bank.v1beta1.AccountBalance is not mutable"))
 	default:
@@ -229,7 +229,7 @@ func (x *fastReflection_AccountBalance) Mutable(fd protoreflect.FieldDescriptor)
 // For lists, maps, and messages, this returns a new, empty, mutable value.
 func (x *fastReflection_AccountBalance) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "cosmos.bank.v1beta1.AccountBalance.account":
+	case "cosmos.bank.v1beta1.AccountBalance.acc":
 		return protoreflect.ValueOfBytes(nil)
 	case "cosmos.bank.v1beta1.AccountBalance.balance":
 		return protoreflect.ValueOfString("")
@@ -302,7 +302,7 @@ func (x *fastReflection_AccountBalance) ProtoMethods() *protoiface.Methods {
 		var n int
 		var l int
 		_ = l
-		l = len(x.Account)
+		l = len(x.Acc)
 		if l > 0 {
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
@@ -346,10 +346,10 @@ func (x *fastReflection_AccountBalance) ProtoMethods() *protoiface.Methods {
 			i--
 			dAtA[i] = 0x12
 		}
-		if len(x.Account) > 0 {
-			i -= len(x.Account)
-			copy(dAtA[i:], x.Account)
-			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Account)))
+		if len(x.Acc) > 0 {
+			i -= len(x.Acc)
+			copy(dAtA[i:], x.Acc)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Acc)))
 			i--
 			dAtA[i] = 0xa
 		}
@@ -404,7 +404,7 @@ func (x *fastReflection_AccountBalance) ProtoMethods() *protoiface.Methods {
 			switch fieldNum {
 			case 1:
 				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Account", wireType)
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Acc", wireType)
 				}
 				var byteLen int
 				for shift := uint(0); ; shift += 7 {
@@ -431,9 +431,9 @@ func (x *fastReflection_AccountBalance) ProtoMethods() *protoiface.Methods {
 				if postIndex > l {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
-				x.Account = append(x.Account[:0], dAtA[iNdEx:postIndex]...)
-				if x.Account == nil {
-					x.Account = []byte{}
+				x.Acc = append(x.Acc[:0], dAtA[iNdEx:postIndex]...)
+				if x.Acc == nil {
+					x.Acc = []byte{}
 				}
 				iNdEx = postIndex
 			case 2:
@@ -1113,14 +1113,14 @@ func (x *_BalanceUpdate_1_list) IsValid() bool {
 }
 
 var (
-	md_BalanceUpdate         protoreflect.MessageDescriptor
-	fd_BalanceUpdate_updates protoreflect.FieldDescriptor
+	md_BalanceUpdate     protoreflect.MessageDescriptor
+	fd_BalanceUpdate_upd protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_cosmos_bank_v1beta1_events_proto_init()
 	md_BalanceUpdate = File_cosmos_bank_v1beta1_events_proto.Messages().ByName("BalanceUpdate")
-	fd_BalanceUpdate_updates = md_BalanceUpdate.Fields().ByName("updates")
+	fd_BalanceUpdate_upd = md_BalanceUpdate.Fields().ByName("upd")
 }
 
 var _ protoreflect.Message = (*fastReflection_BalanceUpdate)(nil)
@@ -1188,9 +1188,9 @@ func (x *fastReflection_BalanceUpdate) Interface() protoreflect.ProtoMessage {
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_BalanceUpdate) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
-	if len(x.Updates) != 0 {
-		value := protoreflect.ValueOfList(&_BalanceUpdate_1_list{list: &x.Updates})
-		if !f(fd_BalanceUpdate_updates, value) {
+	if len(x.Upd) != 0 {
+		value := protoreflect.ValueOfList(&_BalanceUpdate_1_list{list: &x.Upd})
+		if !f(fd_BalanceUpdate_upd, value) {
 			return
 		}
 	}
@@ -1209,8 +1209,8 @@ func (x *fastReflection_BalanceUpdate) Range(f func(protoreflect.FieldDescriptor
 // a repeated field is populated if it is non-empty.
 func (x *fastReflection_BalanceUpdate) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
-	case "cosmos.bank.v1beta1.BalanceUpdate.updates":
-		return len(x.Updates) != 0
+	case "cosmos.bank.v1beta1.BalanceUpdate.upd":
+		return len(x.Upd) != 0
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: cosmos.bank.v1beta1.BalanceUpdate"))
@@ -1227,8 +1227,8 @@ func (x *fastReflection_BalanceUpdate) Has(fd protoreflect.FieldDescriptor) bool
 // Clear is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_BalanceUpdate) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
-	case "cosmos.bank.v1beta1.BalanceUpdate.updates":
-		x.Updates = nil
+	case "cosmos.bank.v1beta1.BalanceUpdate.upd":
+		x.Upd = nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: cosmos.bank.v1beta1.BalanceUpdate"))
@@ -1245,11 +1245,11 @@ func (x *fastReflection_BalanceUpdate) Clear(fd protoreflect.FieldDescriptor) {
 // of the value; to obtain a mutable reference, use Mutable.
 func (x *fastReflection_BalanceUpdate) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
-	case "cosmos.bank.v1beta1.BalanceUpdate.updates":
-		if len(x.Updates) == 0 {
+	case "cosmos.bank.v1beta1.BalanceUpdate.upd":
+		if len(x.Upd) == 0 {
 			return protoreflect.ValueOfList(&_BalanceUpdate_1_list{})
 		}
-		listValue := &_BalanceUpdate_1_list{list: &x.Updates}
+		listValue := &_BalanceUpdate_1_list{list: &x.Upd}
 		return protoreflect.ValueOfList(listValue)
 	default:
 		if descriptor.IsExtension() {
@@ -1271,10 +1271,10 @@ func (x *fastReflection_BalanceUpdate) Get(descriptor protoreflect.FieldDescript
 // Set is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_BalanceUpdate) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
-	case "cosmos.bank.v1beta1.BalanceUpdate.updates":
+	case "cosmos.bank.v1beta1.BalanceUpdate.upd":
 		lv := value.List()
 		clv := lv.(*_BalanceUpdate_1_list)
-		x.Updates = *clv.list
+		x.Upd = *clv.list
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: cosmos.bank.v1beta1.BalanceUpdate"))
@@ -1295,11 +1295,11 @@ func (x *fastReflection_BalanceUpdate) Set(fd protoreflect.FieldDescriptor, valu
 // Mutable is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_BalanceUpdate) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "cosmos.bank.v1beta1.BalanceUpdate.updates":
-		if x.Updates == nil {
-			x.Updates = []*DenomBalanceUpdate{}
+	case "cosmos.bank.v1beta1.BalanceUpdate.upd":
+		if x.Upd == nil {
+			x.Upd = []*DenomBalanceUpdate{}
 		}
-		value := &_BalanceUpdate_1_list{list: &x.Updates}
+		value := &_BalanceUpdate_1_list{list: &x.Upd}
 		return protoreflect.ValueOfList(value)
 	default:
 		if fd.IsExtension() {
@@ -1314,7 +1314,7 @@ func (x *fastReflection_BalanceUpdate) Mutable(fd protoreflect.FieldDescriptor) 
 // For lists, maps, and messages, this returns a new, empty, mutable value.
 func (x *fastReflection_BalanceUpdate) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
-	case "cosmos.bank.v1beta1.BalanceUpdate.updates":
+	case "cosmos.bank.v1beta1.BalanceUpdate.upd":
 		list := []*DenomBalanceUpdate{}
 		return protoreflect.ValueOfList(&_BalanceUpdate_1_list{list: &list})
 	default:
@@ -1386,8 +1386,8 @@ func (x *fastReflection_BalanceUpdate) ProtoMethods() *protoiface.Methods {
 		var n int
 		var l int
 		_ = l
-		if len(x.Updates) > 0 {
-			for _, e := range x.Updates {
+		if len(x.Upd) > 0 {
+			for _, e := range x.Upd {
 				l = options.Size(e)
 				n += 1 + l + runtime.Sov(uint64(l))
 			}
@@ -1421,9 +1421,9 @@ func (x *fastReflection_BalanceUpdate) ProtoMethods() *protoiface.Methods {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
 		}
-		if len(x.Updates) > 0 {
-			for iNdEx := len(x.Updates) - 1; iNdEx >= 0; iNdEx-- {
-				encoded, err := options.Marshal(x.Updates[iNdEx])
+		if len(x.Upd) > 0 {
+			for iNdEx := len(x.Upd) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.Upd[iNdEx])
 				if err != nil {
 					return protoiface.MarshalOutput{
 						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -1488,7 +1488,7 @@ func (x *fastReflection_BalanceUpdate) ProtoMethods() *protoiface.Methods {
 			switch fieldNum {
 			case 1:
 				if wireType != 2 {
-					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Updates", wireType)
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Upd", wireType)
 				}
 				var msglen int
 				for shift := uint(0); ; shift += 7 {
@@ -1515,8 +1515,8 @@ func (x *fastReflection_BalanceUpdate) ProtoMethods() *protoiface.Methods {
 				if postIndex > l {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
 				}
-				x.Updates = append(x.Updates, &DenomBalanceUpdate{})
-				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Updates[len(x.Updates)-1]); err != nil {
+				x.Upd = append(x.Upd, &DenomBalanceUpdate{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Upd[len(x.Upd)-1]); err != nil {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
 				iNdEx = postIndex
@@ -1573,8 +1573,8 @@ type AccountBalance struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Account []byte `protobuf:"bytes,1,opt,name=account,json=a,omitempty,proto3" json:"account,omitempty"`
-	Balance string `protobuf:"bytes,2,opt,name=balance,json=b,omitempty,proto3" json:"balance,omitempty"`
+	Acc     []byte `protobuf:"bytes,1,opt,name=acc,proto3" json:"acc,omitempty"`
+	Balance string `protobuf:"bytes,2,opt,name=balance,proto3" json:"balance,omitempty"`
 }
 
 func (x *AccountBalance) Reset() {
@@ -1597,9 +1597,9 @@ func (*AccountBalance) Descriptor() ([]byte, []int) {
 	return file_cosmos_bank_v1beta1_events_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AccountBalance) GetAccount() []byte {
+func (x *AccountBalance) GetAcc() []byte {
 	if x != nil {
-		return x.Account
+		return x.Acc
 	}
 	return nil
 }
@@ -1616,8 +1616,8 @@ type DenomBalanceUpdate struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Denom    string            `protobuf:"bytes,1,opt,name=denom,json=d,omitempty,proto3" json:"denom,omitempty"`
-	Balances []*AccountBalance `protobuf:"bytes,2,rep,name=balances,json=bs,omitempty,proto3" json:"balances,omitempty"`
+	Denom    string            `protobuf:"bytes,1,opt,name=denom,proto3" json:"denom,omitempty"`
+	Balances []*AccountBalance `protobuf:"bytes,2,rep,name=balances,proto3" json:"balances,omitempty"`
 }
 
 func (x *DenomBalanceUpdate) Reset() {
@@ -1659,7 +1659,7 @@ type BalanceUpdate struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Updates []*DenomBalanceUpdate `protobuf:"bytes,1,rep,name=updates,json=u,omitempty,proto3" json:"updates,omitempty"`
+	Upd []*DenomBalanceUpdate `protobuf:"bytes,1,rep,name=upd,proto3" json:"upd,omitempty"`
 }
 
 func (x *BalanceUpdate) Reset() {
@@ -1682,9 +1682,9 @@ func (*BalanceUpdate) Descriptor() ([]byte, []int) {
 	return file_cosmos_bank_v1beta1_events_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *BalanceUpdate) GetUpdates() []*DenomBalanceUpdate {
+func (x *BalanceUpdate) GetUpd() []*DenomBalanceUpdate {
 	if x != nil {
-		return x.Updates
+		return x.Upd
 	}
 	return nil
 }
@@ -1703,28 +1703,31 @@ var file_cosmos_bank_v1beta1_events_proto_rawDesc = []byte{
 	0x69, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x17, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73,
 	0x2f, 0x6d, 0x73, 0x67, 0x2f, 0x76, 0x31, 0x2f, 0x6d, 0x73, 0x67, 0x2e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x1a, 0x11, 0x61, 0x6d, 0x69, 0x6e, 0x6f, 0x2f, 0x61, 0x6d, 0x69, 0x6e, 0x6f, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x7e, 0x0a, 0x0e, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x42,
-	0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x12, 0x1c, 0x0a, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e,
-	0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x0b, 0x61, 0x2c, 0x6f, 0x6d, 0x69, 0x74, 0x65,
-	0x6d, 0x70, 0x74, 0x79, 0x12, 0x4e, 0x0a, 0x07, 0x62, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x30, 0xc8, 0xde, 0x1f, 0x00, 0xda, 0xde, 0x1f, 0x15, 0x63,
-	0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x6d, 0x61, 0x74, 0x68,
-	0x2e, 0x49, 0x6e, 0x74, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x49,
-	0x6e, 0x74, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x0b, 0x62, 0x2c, 0x6f, 0x6d, 0x69, 0x74, 0x65,
-	0x6d, 0x70, 0x74, 0x79, 0x22, 0x75, 0x0a, 0x12, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x42, 0x61, 0x6c,
-	0x61, 0x6e, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x1a, 0x0a, 0x05, 0x64, 0x65,
-	0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x2c, 0x6f, 0x6d, 0x69,
-	0x74, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x43, 0x0a, 0x08, 0x62, 0x61, 0x6c, 0x61, 0x6e, 0x63,
-	0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x23, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
-	0x73, 0x2e, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x41,
-	0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x42, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x52, 0x0c, 0x62,
-	0x73, 0x2c, 0x6f, 0x6d, 0x69, 0x74, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x22, 0x56, 0x0a, 0x0d, 0x42,
-	0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x45, 0x0a, 0x07,
-	0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x27, 0x2e,
-	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x76, 0x31, 0x62, 0x65,
-	0x74, 0x61, 0x31, 0x2e, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x42, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x52, 0x0b, 0x75, 0x2c, 0x6f, 0x6d, 0x69, 0x74, 0x65, 0x6d,
-	0x70, 0x74, 0x79, 0x42, 0xc6, 0x01, 0x0a, 0x17, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x6f, 0x73, 0x6d,
+	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x8e, 0x01, 0x0a, 0x0e, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74,
+	0x42, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x12, 0x21, 0x0a, 0x03, 0x61, 0x63, 0x63, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0c, 0x42, 0x0f, 0xea, 0xde, 0x1f, 0x0b, 0x61, 0x2c, 0x6f, 0x6d, 0x69, 0x74,
+	0x65, 0x6d, 0x70, 0x74, 0x79, 0x52, 0x03, 0x61, 0x63, 0x63, 0x12, 0x59, 0x0a, 0x07, 0x62, 0x61,
+	0x6c, 0x61, 0x6e, 0x63, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x3f, 0xc8, 0xde, 0x1f,
+	0x00, 0xda, 0xde, 0x1f, 0x15, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69,
+	0x6f, 0x2f, 0x6d, 0x61, 0x74, 0x68, 0x2e, 0x49, 0x6e, 0x74, 0xea, 0xde, 0x1f, 0x0b, 0x62, 0x2c,
+	0x6f, 0x6d, 0x69, 0x74, 0x65, 0x6d, 0x70, 0x74, 0x79, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73,
+	0x6d, 0x6f, 0x73, 0x2e, 0x49, 0x6e, 0x74, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x07, 0x62, 0x61,
+	0x6c, 0x61, 0x6e, 0x63, 0x65, 0x22, 0x8e, 0x01, 0x0a, 0x12, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x42,
+	0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x25, 0x0a, 0x05,
+	0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x0f, 0xea, 0xde, 0x1f,
+	0x0b, 0x64, 0x2c, 0x6f, 0x6d, 0x69, 0x74, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x52, 0x05, 0x64, 0x65,
+	0x6e, 0x6f, 0x6d, 0x12, 0x51, 0x0a, 0x08, 0x62, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x73, 0x18,
+	0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x23, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62,
+	0x61, 0x6e, 0x6b, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x41, 0x63, 0x63, 0x6f,
+	0x75, 0x6e, 0x74, 0x42, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x42, 0x10, 0xea, 0xde, 0x1f, 0x0c,
+	0x62, 0x73, 0x2c, 0x6f, 0x6d, 0x69, 0x74, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x52, 0x08, 0x62, 0x61,
+	0x6c, 0x61, 0x6e, 0x63, 0x65, 0x73, 0x22, 0x5b, 0x0a, 0x0d, 0x42, 0x61, 0x6c, 0x61, 0x6e, 0x63,
+	0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x4a, 0x0a, 0x03, 0x75, 0x70, 0x64, 0x18, 0x01,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x62, 0x61,
+	0x6e, 0x6b, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x2e, 0x44, 0x65, 0x6e, 0x6f, 0x6d,
+	0x42, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x42, 0x0f, 0xea,
+	0xde, 0x1f, 0x0b, 0x75, 0x2c, 0x6f, 0x6d, 0x69, 0x74, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x52, 0x03,
+	0x75, 0x70, 0x64, 0x42, 0xc6, 0x01, 0x0a, 0x17, 0x63, 0x6f, 0x6d, 0x2e, 0x63, 0x6f, 0x73, 0x6d,
 	0x6f, 0x73, 0x2e, 0x62, 0x61, 0x6e, 0x6b, 0x2e, 0x76, 0x31, 0x62, 0x65, 0x74, 0x61, 0x31, 0x42,
 	0x0b, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x30,
 	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x61, 0x70, 0x69,
@@ -1760,7 +1763,7 @@ var file_cosmos_bank_v1beta1_events_proto_goTypes = []interface{}{
 }
 var file_cosmos_bank_v1beta1_events_proto_depIdxs = []int32{
 	0, // 0: cosmos.bank.v1beta1.DenomBalanceUpdate.balances:type_name -> cosmos.bank.v1beta1.AccountBalance
-	1, // 1: cosmos.bank.v1beta1.BalanceUpdate.updates:type_name -> cosmos.bank.v1beta1.DenomBalanceUpdate
+	1, // 1: cosmos.bank.v1beta1.BalanceUpdate.upd:type_name -> cosmos.bank.v1beta1.DenomBalanceUpdate
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

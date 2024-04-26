@@ -30,15 +30,17 @@ func (k BaseKeeper) EndBlocker(ctx context.Context) error {
 
 		denom := p.K2()
 		denomToUpdates[denom] = append(denomToUpdates[denom], &types.AccountBalance{
-			Account: p.K1(),
+			Acc:     p.K1(),
 			Balance: v,
 		})
+
+		itr.Next()
 	}
 
 	// events doesn't break consensus so we don't need to sort the map
 	updateEvent := &types.BalanceUpdate{}
 	for denom, updates := range denomToUpdates {
-		updateEvent.Updates = append(updateEvent.Updates, &types.DenomBalanceUpdate{
+		updateEvent.Upd = append(updateEvent.Upd, &types.DenomBalanceUpdate{
 			Denom:    denom,
 			Balances: updates,
 		})
