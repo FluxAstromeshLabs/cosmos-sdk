@@ -63,7 +63,7 @@ type BaseKeeper struct {
 	ak                     types.AccountKeeper
 	cdc                    codec.BinaryCodec
 	storeService           store.KVStoreService
-	balanceTKey            *storetypes.TransientStoreKey
+	tStoreKey              *storetypes.TransientStoreKey
 	mintCoinsRestrictionFn types.MintingRestrictionFn
 	logger                 log.Logger
 	endBlockerCb           func(*BaseKeeper, context.Context) error
@@ -112,10 +112,10 @@ func NewBaseKeeper(
 	}
 }
 
-func NewBaseKeeperWithBalanceUpdateStore(
+func NewBaseKeeperWithTransientStore(
 	cdc codec.BinaryCodec,
 	storeService store.KVStoreService,
-	balanceTKey *storetypes.TransientStoreKey,
+	tStoreKey *storetypes.TransientStoreKey,
 	ak types.AccountKeeper,
 	blockedAddrs map[string]bool,
 	authority string,
@@ -123,14 +123,14 @@ func NewBaseKeeperWithBalanceUpdateStore(
 	endBlockerCb EndBlockerCallback,
 ) BaseKeeper {
 	baseK := NewBaseKeeper(cdc, storeService, ak, blockedAddrs, authority, logger)
-	baseK.BaseSendKeeper.balanceTKey = balanceTKey
-	baseK.balanceTKey = balanceTKey
+	baseK.BaseSendKeeper.tStoreKey = tStoreKey
+	baseK.tStoreKey = tStoreKey
 	baseK.endBlockerCb = endBlockerCb
 	return baseK
 }
 
-func (k BaseKeeper) GetBalanceUpdateStore() *storetypes.TransientStoreKey {
-	return k.balanceTKey
+func (k BaseKeeper) GetTransientStoreKey() *storetypes.TransientStoreKey {
+	return k.tStoreKey
 }
 
 // WithMintCoinsRestriction restricts the bank Keeper used within a specific module to

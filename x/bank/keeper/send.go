@@ -60,7 +60,7 @@ type BaseSendKeeper struct {
 	cdc          codec.BinaryCodec
 	ak           types.AccountKeeper
 	storeService store.KVStoreService
-	balanceTKey  *storetypes.TransientStoreKey
+	tStoreKey    *storetypes.TransientStoreKey
 	logger       log.Logger
 
 	// list of addresses that are restricted from receiving transactions
@@ -340,22 +340,20 @@ func (k BaseSendKeeper) setBalance(ctx context.Context, addr sdk.AccAddress, bal
 		return nil
 	}
 
-	pk := collections.Join(addr, balance.Denom)
-	sz := k.Balances.KeyCodec().Size(pk)
-	bz := make([]byte, sz)
-	_, err := k.Balances.KeyCodec().Encode(bz, pk)
-	if err != nil {
-		return err
-	}
-
-	valueBz, err := k.Balances.ValueCodec().Encode(balance.Amount)
-	if err != nil {
-		return err
-	}
-
 	// set balance update in transient store, so that in endblocker we know which balances are updated within this block
-	if k.balanceTKey != nil {
-		sdk.UnwrapSDKContext(ctx).TransientStore(k.balanceTKey).Set(bz, valueBz)
+	if k.tStoreKey != nil {
+		pk := collections.Join(addr, balance.Denom)
+		keyBz, err := collections.EncodeKeyWithPrefix(types.BalancesPrefix, k.Balances.KeyCodec(), pk)
+		if err != nil {
+			return err
+		}
+
+		valueBz, err := k.Balances.ValueCodec().Encode(balance.Amount)
+		if err != nil {
+			return err
+		}
+
+		sdk.UnwrapSDKContext(ctx).TransientStore(k.tStoreKey).Set(keyBz, valueBz)
 	}
 	return k.Balances.Set(ctx, collections.Join(addr, balance.Denom), balance.Amount)
 }
