@@ -197,7 +197,6 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 }
 
 func (am AppModule) EndBlock(ctx context.Context) error {
-	fmt.Println("bank end block runs")
 	return am.keeper.EndBlocker(ctx)
 }
 
