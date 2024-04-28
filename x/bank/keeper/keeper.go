@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"cosmossdk.io/collections"
 	"cosmossdk.io/core/store"
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
@@ -278,6 +279,21 @@ func (k BaseKeeper) IterateAllDenomMetaData(ctx context.Context, cb func(types.M
 // SetDenomMetaData sets the denominations metadata
 func (k BaseKeeper) SetDenomMetaData(ctx context.Context, denomMetaData types.Metadata) {
 	_ = k.BaseViewKeeper.DenomMetadata.Set(ctx, denomMetaData.Base, denomMetaData)
+
+	if k.tStoreKey != nil {
+		keyCdc, valueCdc := k.BaseViewKeeper.DenomMetadata.KeyCodec(), k.BaseViewKeeper.DenomMetadata.ValueCodec()
+		keyBz, err := collections.EncodeKeyWithPrefix(types.DenomMetadataPrefix, keyCdc, denomMetaData.Base)
+		if err != nil {
+			panic(err)
+		}
+
+		valueBz, err := valueCdc.Encode(denomMetaData)
+		if err != nil {
+			panic(err)
+		}
+
+		sdk.UnwrapSDKContext(ctx).TransientStore(k.tStoreKey).Set(keyBz, valueBz)
+	}
 }
 
 // SendCoinsFromModuleToAccount transfers coins from a ModuleAccount to an AccAddress.
