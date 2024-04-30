@@ -47,12 +47,15 @@ type Keeper interface {
 	UndelegateCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
 	MintCoins(ctx context.Context, moduleName string, amt sdk.Coins) error
 	BurnCoins(ctx context.Context, moduleName string, amt sdk.Coins) error
-	EndBlocker(ctx context.Context) error
 
 	DelegateCoins(ctx context.Context, delegatorAddr, moduleAccAddr sdk.AccAddress, amt sdk.Coins) error
 	UndelegateCoins(ctx context.Context, moduleAccAddr, delegatorAddr sdk.AccAddress, amt sdk.Coins) error
 
 	types.QueryServer
+
+	EndBlocker(ctx context.Context) error
+	RegisterEndblockerCallback(name string, cb EndBlockerCallback)
+	GetEndBlockerCallbackMap() map[string]EndBlockerCallback
 }
 
 type EndBlockerCallback func(*BaseKeeper, context.Context) error
@@ -110,6 +113,7 @@ func NewBaseKeeper(
 		storeService:           storeService,
 		mintCoinsRestrictionFn: types.NoOpMintingRestrictionFn,
 		logger:                 logger,
+		endBlockerCbMap:        map[string]EndBlockerCallback{},
 	}
 }
 
@@ -133,7 +137,7 @@ func (k BaseKeeper) GetTransientStoreKey() *storetypes.TransientStoreKey {
 }
 
 // set callback to be run at bank's endblocker
-func (k *BaseKeeper) RegisterEndblockerCallback(name string, cb EndBlockerCallback) {
+func (k BaseKeeper) RegisterEndblockerCallback(name string, cb EndBlockerCallback) {
 	if k.endBlockerCbMap == nil {
 		k.endBlockerCbMap = map[string]EndBlockerCallback{}
 	}
@@ -141,7 +145,7 @@ func (k *BaseKeeper) RegisterEndblockerCallback(name string, cb EndBlockerCallba
 	k.endBlockerCbMap[name] = cb
 }
 
-func (k *BaseKeeper) GetEndBlockerCallbackMap() map[string]EndBlockerCallback {
+func (k BaseKeeper) GetEndBlockerCallbackMap() map[string]EndBlockerCallback {
 	return k.endBlockerCbMap
 }
 
