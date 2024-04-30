@@ -1,6 +1,7 @@
 package genutil
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
@@ -12,6 +13,7 @@ import (
 	"cosmossdk.io/core/genesis"
 	"cosmossdk.io/depinject"
 
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -98,6 +100,13 @@ func (AppModule) IsOnePerModuleType() {}
 
 // IsAppModule implements the appmodule.AppModule interface.
 func (AppModule) IsAppModule() {}
+
+func (am AppModule) EndBlock(ctx context.Context) error {
+	if cbFn := baseapp.GetEndBlockerCallback(types.ModuleName); cbFn != nil {
+		return cbFn(am.stakingKeeper, ctx)
+	}
+	return nil
+}
 
 // InitGenesis performs genesis initialization for the genutil module.
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) []abci.ValidatorUpdate {
