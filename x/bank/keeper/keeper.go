@@ -138,10 +138,6 @@ func (k BaseKeeper) GetTransientStoreKey() *storetypes.TransientStoreKey {
 
 // set callback to be run at bank's endblocker
 func (k BaseKeeper) RegisterEndblockerCallback(name string, cb EndBlockerCallback) {
-	if k.endBlockerCbMap == nil {
-		k.endBlockerCbMap = map[string]EndBlockerCallback{}
-	}
-
 	k.endBlockerCbMap[name] = cb
 }
 
