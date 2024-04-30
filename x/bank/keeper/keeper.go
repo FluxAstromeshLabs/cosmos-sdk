@@ -67,7 +67,7 @@ type BaseKeeper struct {
 	tStoreKey              *storetypes.TransientStoreKey
 	mintCoinsRestrictionFn types.MintingRestrictionFn
 	logger                 log.Logger
-	endBlockerCb           func(*BaseKeeper, context.Context) error
+	endBlockerCbMap        map[string]EndBlockerCallback
 }
 
 // GetPaginatedTotalSupply queries for the supply, ignoring 0 coins, with a given pagination
@@ -121,17 +121,28 @@ func NewBaseKeeperWithTransientStore(
 	blockedAddrs map[string]bool,
 	authority string,
 	logger log.Logger,
-	endBlockerCb EndBlockerCallback,
 ) BaseKeeper {
 	baseK := NewBaseKeeper(cdc, storeService, ak, blockedAddrs, authority, logger)
 	baseK.BaseSendKeeper.tStoreKey = tStoreKey
 	baseK.tStoreKey = tStoreKey
-	baseK.endBlockerCb = endBlockerCb
 	return baseK
 }
 
 func (k BaseKeeper) GetTransientStoreKey() *storetypes.TransientStoreKey {
 	return k.tStoreKey
+}
+
+// set callback to be run at bank's endblocker
+func (k *BaseKeeper) RegisterEndblockerCallback(name string, cb EndBlockerCallback) {
+	if k.endBlockerCbMap == nil {
+		k.endBlockerCbMap = map[string]EndBlockerCallback{}
+	}
+
+	k.endBlockerCbMap[name] = cb
+}
+
+func (k *BaseKeeper) GetEndBlockerCallbackMap() map[string]EndBlockerCallback {
+	return k.endBlockerCbMap
 }
 
 // WithMintCoinsRestriction restricts the bank Keeper used within a specific module to
