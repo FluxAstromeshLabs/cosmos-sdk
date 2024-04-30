@@ -150,6 +150,13 @@ func (am AppModule) BeginBlock(ctx context.Context) error {
 	return BeginBlocker(c, am.keeper)
 }
 
+func (am AppModule) EndBlock(ctx context.Context) error {
+	if cbFn := baseapp.GetCallback(authz.ModuleName); cbFn != nil {
+		return cbFn(am.keeper, ctx)
+	}
+	return nil
+}
+
 func init() {
 	appmodule.Register(
 		&modulev1.Module{},

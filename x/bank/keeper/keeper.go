@@ -54,8 +54,6 @@ type Keeper interface {
 	types.QueryServer
 }
 
-type EndBlockerCallback func(*BaseKeeper, context.Context) error
-
 // BaseKeeper manages transfers between accounts. It implements the Keeper interface.
 type BaseKeeper struct {
 	BaseSendKeeper
@@ -119,7 +117,6 @@ func NewBaseKeeperWithTransientStore(
 	blockedAddrs map[string]bool,
 	authority string,
 	logger log.Logger,
-	endBlockerCb EndBlockerCallback,
 ) BaseKeeper {
 	baseK := NewBaseKeeper(cdc, storeService, ak, blockedAddrs, authority, logger)
 	baseK.BaseSendKeeper.tStoreKey = tStoreKey
