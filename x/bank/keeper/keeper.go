@@ -47,6 +47,7 @@ type Keeper interface {
 	UndelegateCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
 	MintCoins(ctx context.Context, moduleName string, amt sdk.Coins) error
 	BurnCoins(ctx context.Context, moduleName string, amt sdk.Coins) error
+	EndBlocker(ctx context.Context) error
 
 	DelegateCoins(ctx context.Context, delegatorAddr, moduleAccAddr sdk.AccAddress, amt sdk.Coins) error
 	UndelegateCoins(ctx context.Context, moduleAccAddr, delegatorAddr sdk.AccAddress, amt sdk.Coins) error
@@ -66,6 +67,7 @@ type BaseKeeper struct {
 	tStoreKey              *storetypes.TransientStoreKey
 	mintCoinsRestrictionFn types.MintingRestrictionFn
 	logger                 log.Logger
+	endBlockerCb           func(*BaseKeeper, context.Context) error
 }
 
 // GetPaginatedTotalSupply queries for the supply, ignoring 0 coins, with a given pagination
@@ -124,6 +126,7 @@ func NewBaseKeeperWithTransientStore(
 	baseK := NewBaseKeeper(cdc, storeService, ak, blockedAddrs, authority, logger)
 	baseK.BaseSendKeeper.tStoreKey = tStoreKey
 	baseK.tStoreKey = tStoreKey
+	baseK.endBlockerCb = endBlockerCb
 	return baseK
 }
 

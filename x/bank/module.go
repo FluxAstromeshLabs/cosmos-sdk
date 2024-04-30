@@ -17,7 +17,6 @@ import (
 	"cosmossdk.io/log"
 
 	storetypes "cosmossdk.io/store/types"
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -198,10 +197,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 }
 
 func (am AppModule) EndBlock(ctx context.Context) error {
-	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
-		return cbFn(am.keeper, ctx)
-	}
-	return nil
+	return am.keeper.EndBlocker(ctx)
 }
 
 // App Wiring Setup
