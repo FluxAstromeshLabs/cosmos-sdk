@@ -91,7 +91,7 @@ func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
 func (AppModule) ConsensusVersion() uint64 { return ConsensusVersion }
 
 func (am AppModule) EndBlock(ctx context.Context) error {
-	if cbFn := baseapp.GetEndBlockerCallback(types.ModuleName); cbFn != nil {
+	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
 		return cbFn(am.keeper, ctx)
 	}
 	return nil

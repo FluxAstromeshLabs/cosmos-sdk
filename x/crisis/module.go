@@ -165,7 +165,7 @@ func (AppModule) ConsensusVersion() uint64 { return ConsensusVersion }
 // updates.
 func (am AppModule) EndBlock(ctx context.Context) error {
 	EndBlocker(ctx, *am.keeper)
-	if cbFn := baseapp.GetEndBlockerCallback(types.ModuleName); cbFn != nil {
+	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
 		return cbFn(am.keeper, ctx)
 	}
 

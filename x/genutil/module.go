@@ -102,7 +102,7 @@ func (AppModule) IsOnePerModuleType() {}
 func (AppModule) IsAppModule() {}
 
 func (am AppModule) EndBlock(ctx context.Context) error {
-	if cbFn := baseapp.GetEndBlockerCallback(types.ModuleName); cbFn != nil {
+	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
 		return cbFn(am.stakingKeeper, ctx)
 	}
 	return nil

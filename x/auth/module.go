@@ -176,7 +176,7 @@ func (AppModule) WeightedOperations(_ module.SimulationState) []simtypes.Weighte
 }
 
 func (am AppModule) EndBlock(ctx context.Context) error {
-	if cbFn := baseapp.GetEndBlockerCallback(types.ModuleName); cbFn != nil {
+	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
 		return cbFn(am.accountKeeper, ctx)
 	}
 	return nil

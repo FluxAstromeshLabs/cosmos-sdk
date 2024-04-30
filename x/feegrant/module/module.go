@@ -167,7 +167,7 @@ func (am AppModule) EndBlock(ctx context.Context) error {
 		return err
 	}
 
-	if cbFn := baseapp.GetEndBlockerCallback(feegrant.ModuleName); cbFn != nil {
+	if cbFn := baseapp.GetCallback(feegrant.ModuleName); cbFn != nil {
 		return cbFn(am.keeper, ctx)
 	}
 	return nil
