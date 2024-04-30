@@ -14,6 +14,7 @@ import (
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/depinject"
 
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -194,6 +195,13 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		simState.AppParams, simState.Cdc, simState.TxConfig,
 		am.accountKeeper, am.bankKeeper, am.keeper, am.stakingKeeper,
 	)
+}
+
+func (am AppModule) EndBlock(ctx context.Context) error {
+	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
+		return cbFn(am.keeper, ctx)
+	}
+	return nil
 }
 
 //

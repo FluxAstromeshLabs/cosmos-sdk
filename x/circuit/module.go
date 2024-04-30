@@ -126,6 +126,13 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 	return cdc.MustMarshalJSON(gs)
 }
 
+func (am AppModule) EndBlock(ctx context.Context) error {
+	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
+		return cbFn(am.keeper, ctx)
+	}
+	return nil
+}
+
 func init() {
 	appmodule.Register(
 		&modulev1.Module{},

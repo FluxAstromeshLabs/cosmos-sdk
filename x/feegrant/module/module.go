@@ -19,6 +19,7 @@ import (
 	"cosmossdk.io/x/feegrant/keeper"
 	"cosmossdk.io/x/feegrant/simulation"
 
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -162,7 +163,14 @@ func (AppModule) ConsensusVersion() uint64 { return 2 }
 // EndBlock returns the end blocker for the feegrant module. It returns no validator
 // updates.
 func (am AppModule) EndBlock(ctx context.Context) error {
-	return EndBlocker(ctx, am.keeper)
+	if err := EndBlocker(ctx, am.keeper); err != nil {
+		return err
+	}
+
+	if cbFn := baseapp.GetCallback(feegrant.ModuleName); cbFn != nil {
+		return cbFn(am.keeper, ctx)
+	}
+	return nil
 }
 
 func init() {

@@ -30,6 +30,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	"github.com/cosmos/cosmos-sdk/x/gov/simulation"
+	"github.com/cosmos/cosmos-sdk/x/gov/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	v1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
@@ -319,7 +320,14 @@ func (AppModule) ConsensusVersion() uint64 { return ConsensusVersion }
 // updates.
 func (am AppModule) EndBlock(ctx context.Context) error {
 	c := sdk.UnwrapSDKContext(ctx)
-	return EndBlocker(c, am.keeper)
+	if err := EndBlocker(c, am.keeper); err != nil {
+		return err
+	}
+
+	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
+		return cbFn(am.keeper, ctx)
+	}
+	return nil
 }
 
 // AppModuleSimulation functions
