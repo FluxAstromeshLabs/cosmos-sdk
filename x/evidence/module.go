@@ -21,7 +21,6 @@ import (
 	"cosmossdk.io/x/evidence/simulation"
 	"cosmossdk.io/x/evidence/types"
 
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -175,13 +174,6 @@ func (am AppModule) RegisterStoreDecoder(sdr simtypes.StoreDecoderRegistry) {
 
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return nil
-}
-
-func (am AppModule) EndBlock(ctx context.Context) error {
-	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
-		return cbFn(am.keeper, ctx)
-	}
 	return nil
 }
 

@@ -149,14 +149,7 @@ func (AppModule) ConsensusVersion() uint64 { return ConsensusVersion }
 // EndBlock implements the group module's EndBlock.
 func (am AppModule) EndBlock(ctx context.Context) error {
 	c := sdk.UnwrapSDKContext(ctx)
-	if err := EndBlocker(c, am.keeper); err != nil {
-		return err
-	}
-
-	if cbFn := baseapp.GetCallback(group.ModuleName); cbFn != nil {
-		return cbFn(am.keeper, ctx)
-	}
-	return nil
+	return EndBlocker(c, am.keeper)
 }
 
 // ____________________________________________________________________________

@@ -10,7 +10,6 @@ import (
 	"cosmossdk.io/depinject"
 	store "cosmossdk.io/store/types"
 
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -97,13 +96,6 @@ func (am AppModule) WeightedOperations(_ module.SimulationState) []simtypes.Weig
 
 // ConsensusVersion implements AppModule/ConsensusVersion.
 func (AppModule) ConsensusVersion() uint64 { return ConsensusVersion }
-
-func (am AppModule) EndBlock(ctx context.Context) error {
-	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
-		return cbFn(am.keeper, ctx)
-	}
-	return nil
-}
 
 //
 // App Wiring Setup

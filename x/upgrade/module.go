@@ -161,13 +161,6 @@ func (am AppModule) PreBlock(ctx context.Context) (appmodule.ResponsePreBlock, e
 	return PreBlocker(ctx, am.keeper)
 }
 
-func (am AppModule) EndBlock(ctx context.Context) error {
-	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
-		return cbFn(am.keeper, ctx)
-	}
-	return nil
-}
-
 //
 // App Wiring Setup
 //

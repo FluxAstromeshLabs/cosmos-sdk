@@ -16,7 +16,6 @@ import (
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/depinject"
 
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -185,16 +184,7 @@ func (am AppModule) BeginBlock(ctx context.Context) error {
 // EndBlock returns the end blocker for the staking module. It returns no validator
 // updates.
 func (am AppModule) EndBlock(ctx context.Context) ([]abci.ValidatorUpdate, error) {
-	valUpdates, err := am.keeper.EndBlocker(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if cbFn := baseapp.GetCallback(types.ModuleName); cbFn != nil {
-		return valUpdates, cbFn(am.keeper, ctx)
-	}
-
-	return valUpdates, nil
+	return am.keeper.EndBlocker(ctx)
 }
 
 func init() {
