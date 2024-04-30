@@ -13,6 +13,6 @@ func RegisterEndBlockerCallback(moduleName string, cb CallbackFn) {
 	endBlockerCallback[moduleName] = cb
 }
 
-func GetCallback(moduleName string) CallbackFn {
+func GetEndBlockerCallback(moduleName string) CallbackFn {
 	return endBlockerCallback[moduleName]
 }

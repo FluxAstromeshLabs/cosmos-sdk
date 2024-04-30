@@ -154,7 +154,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 }
 
 func (am AppModule) EndBlock(ctx context.Context) error {
-	if cbFn := baseapp.GetCallback(nft.ModuleName); cbFn != nil {
+	if cbFn := baseapp.GetEndBlockerCallback(nft.ModuleName); cbFn != nil {
 		return cbFn(am.keeper, ctx)
 	}
 	return nil

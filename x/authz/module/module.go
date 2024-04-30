@@ -151,7 +151,7 @@ func (am AppModule) BeginBlock(ctx context.Context) error {
 }
 
 func (am AppModule) EndBlock(ctx context.Context) error {
-	if cbFn := baseapp.GetCallback(authz.ModuleName); cbFn != nil {
+	if cbFn := baseapp.GetEndBlockerCallback(authz.ModuleName); cbFn != nil {
 		return cbFn(am.keeper, ctx)
 	}
 	return nil

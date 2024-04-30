@@ -153,7 +153,7 @@ func (am AppModule) EndBlock(ctx context.Context) error {
 		return err
 	}
 
-	if cbFn := baseapp.GetCallback(group.ModuleName); cbFn != nil {
+	if cbFn := baseapp.GetEndBlockerCallback(group.ModuleName); cbFn != nil {
 		return cbFn(am.keeper, ctx)
 	}
 	return nil
