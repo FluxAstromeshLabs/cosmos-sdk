@@ -16,6 +16,7 @@ import (
 	"cosmossdk.io/depinject"
 	"cosmossdk.io/log"
 
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -195,6 +196,10 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 }
 
+func (am AppModule) EndBlock(ctx context.Context) error {
+	return am.keeper.EndBlocker(ctx)
+}
+
 // App Wiring Setup
 
 func init() {
@@ -209,6 +214,7 @@ type ModuleInputs struct {
 	Config       *modulev1.Module
 	Cdc          codec.Codec
 	StoreService corestore.KVStoreService
+	TStore       storetypes.TransientStoreKey
 	Logger       log.Logger
 
 	AccountKeeper types.AccountKeeper

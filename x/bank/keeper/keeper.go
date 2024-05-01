@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"cosmossdk.io/collections"
 	"cosmossdk.io/core/store"
 	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
 
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -50,7 +52,13 @@ type Keeper interface {
 	UndelegateCoins(ctx context.Context, moduleAccAddr, delegatorAddr sdk.AccAddress, amt sdk.Coins) error
 
 	types.QueryServer
+
+	EndBlocker(ctx context.Context) error
+	RegisterEndblockerCallback(name string, cb EndBlockerCallback)
+	GetEndBlockerCallbackMap() map[string]EndBlockerCallback
 }
+
+type EndBlockerCallback func(*BaseKeeper, context.Context) error
 
 // BaseKeeper manages transfers between accounts. It implements the Keeper interface.
 type BaseKeeper struct {
@@ -59,8 +67,10 @@ type BaseKeeper struct {
 	ak                     types.AccountKeeper
 	cdc                    codec.BinaryCodec
 	storeService           store.KVStoreService
+	tStoreKey              *storetypes.TransientStoreKey
 	mintCoinsRestrictionFn types.MintingRestrictionFn
 	logger                 log.Logger
+	endBlockerCbMap        map[string]EndBlockerCallback
 }
 
 // GetPaginatedTotalSupply queries for the supply, ignoring 0 coins, with a given pagination
@@ -103,7 +113,36 @@ func NewBaseKeeper(
 		storeService:           storeService,
 		mintCoinsRestrictionFn: types.NoOpMintingRestrictionFn,
 		logger:                 logger,
+		endBlockerCbMap:        map[string]EndBlockerCallback{},
 	}
+}
+
+func NewBaseKeeperWithTransientStore(
+	cdc codec.BinaryCodec,
+	storeService store.KVStoreService,
+	tStoreKey *storetypes.TransientStoreKey,
+	ak types.AccountKeeper,
+	blockedAddrs map[string]bool,
+	authority string,
+	logger log.Logger,
+) BaseKeeper {
+	baseK := NewBaseKeeper(cdc, storeService, ak, blockedAddrs, authority, logger)
+	baseK.BaseSendKeeper.tStoreKey = tStoreKey
+	baseK.tStoreKey = tStoreKey
+	return baseK
+}
+
+func (k BaseKeeper) GetTransientStoreKey() *storetypes.TransientStoreKey {
+	return k.tStoreKey
+}
+
+// set callback to be run at bank's endblocker
+func (k BaseKeeper) RegisterEndblockerCallback(name string, cb EndBlockerCallback) {
+	k.endBlockerCbMap[name] = cb
+}
+
+func (k BaseKeeper) GetEndBlockerCallbackMap() map[string]EndBlockerCallback {
+	return k.endBlockerCbMap
 }
 
 // WithMintCoinsRestriction restricts the bank Keeper used within a specific module to
@@ -251,6 +290,21 @@ func (k BaseKeeper) IterateAllDenomMetaData(ctx context.Context, cb func(types.M
 // SetDenomMetaData sets the denominations metadata
 func (k BaseKeeper) SetDenomMetaData(ctx context.Context, denomMetaData types.Metadata) {
 	_ = k.BaseViewKeeper.DenomMetadata.Set(ctx, denomMetaData.Base, denomMetaData)
+
+	if k.tStoreKey != nil {
+		keyCdc, valueCdc := k.BaseViewKeeper.DenomMetadata.KeyCodec(), k.BaseViewKeeper.DenomMetadata.ValueCodec()
+		keyBz, err := collections.EncodeKeyWithPrefix(types.DenomMetadataPrefix, keyCdc, denomMetaData.Base)
+		if err != nil {
+			panic(err)
+		}
+
+		valueBz, err := valueCdc.Encode(denomMetaData)
+		if err != nil {
+			panic(err)
+		}
+
+		sdk.UnwrapSDKContext(ctx).TransientStore(k.tStoreKey).Set(keyBz, valueBz)
+	}
 }
 
 // SendCoinsFromModuleToAccount transfers coins from a ModuleAccount to an AccAddress.

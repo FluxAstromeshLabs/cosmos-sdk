@@ -10,6 +10,7 @@ import (
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
 
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -59,6 +60,7 @@ type BaseSendKeeper struct {
 	cdc          codec.BinaryCodec
 	ak           types.AccountKeeper
 	storeService store.KVStoreService
+	tStoreKey    *storetypes.TransientStoreKey
 	logger       log.Logger
 
 	// list of addresses that are restricted from receiving transactions
@@ -336,6 +338,22 @@ func (k BaseSendKeeper) setBalance(ctx context.Context, addr sdk.AccAddress, bal
 			return err
 		}
 		return nil
+	}
+
+	// set balance update in transient store, so that in endblocker we know which balances are updated within this block
+	if k.tStoreKey != nil {
+		pk := collections.Join(addr, balance.Denom)
+		keyBz, err := collections.EncodeKeyWithPrefix(types.BalancesPrefix, k.Balances.KeyCodec(), pk)
+		if err != nil {
+			return err
+		}
+
+		valueBz, err := k.Balances.ValueCodec().Encode(balance.Amount)
+		if err != nil {
+			return err
+		}
+
+		sdk.UnwrapSDKContext(ctx).TransientStore(k.tStoreKey).Set(keyBz, valueBz)
 	}
 	return k.Balances.Set(ctx, collections.Join(addr, balance.Denom), balance.Amount)
 }
