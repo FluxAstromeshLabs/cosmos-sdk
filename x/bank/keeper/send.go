@@ -357,11 +357,15 @@ func (k BaseSendKeeper) setBalance(ctx context.Context, addr sdk.AccAddress, bal
 			return err
 		}
 
-		k.setTransientBalance(ctx, addr, balance)
+		if err := k.setTransientBalance(ctx, addr, balance); err != nil {
+			return err
+		}
 		return nil
 	}
 
-	k.setTransientBalance(ctx, addr, balance)
+	if err := k.setTransientBalance(ctx, addr, balance); err != nil {
+		return err
+	}
 	return k.Balances.Set(ctx, collections.Join(addr, balance.Denom), balance.Amount)
 }
 
