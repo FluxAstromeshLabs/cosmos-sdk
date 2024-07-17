@@ -325,21 +325,7 @@ func (k BaseSendKeeper) addCoins(ctx context.Context, addr sdk.AccAddress, amt s
 	return nil
 }
 
-// setBalance sets the coin balance for an account by address.
-func (k BaseSendKeeper) setBalance(ctx context.Context, addr sdk.AccAddress, balance sdk.Coin) error {
-	if !balance.IsValid() {
-		return errorsmod.Wrap(sdkerrors.ErrInvalidCoins, balance.String())
-	}
-
-	// x/bank invariants prohibit persistence of zero balances
-	if balance.IsZero() {
-		err := k.Balances.Remove(ctx, collections.Join(addr, balance.Denom))
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-
+func (k BaseSendKeeper) setTransientBalance(ctx context.Context, addr sdk.AccAddress, balance sdk.Coin) error {
 	// set balance update in transient store, so that in endblocker we know which balances are updated within this block
 	if k.tStoreKey != nil {
 		pk := collections.Join(addr, balance.Denom)
@@ -355,6 +341,27 @@ func (k BaseSendKeeper) setBalance(ctx context.Context, addr sdk.AccAddress, bal
 
 		sdk.UnwrapSDKContext(ctx).TransientStore(k.tStoreKey).Set(keyBz, valueBz)
 	}
+	return nil
+}
+
+// setBalance sets the coin balance for an account by address.
+func (k BaseSendKeeper) setBalance(ctx context.Context, addr sdk.AccAddress, balance sdk.Coin) error {
+	if !balance.IsValid() {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidCoins, balance.String())
+	}
+
+	// x/bank invariants prohibit persistence of zero balances
+	if balance.IsZero() {
+		err := k.Balances.Remove(ctx, collections.Join(addr, balance.Denom))
+		if err != nil {
+			return err
+		}
+
+		k.setTransientBalance(ctx, addr, balance)
+		return nil
+	}
+
+	k.setTransientBalance(ctx, addr, balance)
 	return k.Balances.Set(ctx, collections.Join(addr, balance.Denom), balance.Amount)
 }
 
