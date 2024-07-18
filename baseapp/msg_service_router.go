@@ -202,14 +202,14 @@ func (msr *MsgServiceRouter) registerMsgServiceHandler(sd *grpc.ServiceDesc, met
 			return nil, err
 		}
 
-		// collect events
-		if !ctx.IsCheckTx() {
-			sdk.FluxEventManagerSingleton.AddTypedEvents(ctx.EventManager())
-		}
-
 		resMsg, ok := res.(proto.Message)
 		if !ok {
 			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidType, "Expecting proto.Message, got %T", resMsg)
+		}
+
+		// collect events
+		if !ctx.IsCheckTx() {
+			sdk.FluxEventManagerSingleton.AddTxEvents(ctx.EventManager())
 		}
 
 		return sdk.WrapServiceResult(ctx, resMsg, err)
