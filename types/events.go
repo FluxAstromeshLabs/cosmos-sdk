@@ -17,6 +17,7 @@ import (
 
 type EventManagerI interface {
 	Events() Events
+	TypedEvents() []proto.Message
 	ABCIEvents() []abci.Event
 	EmitTypedEvent(tev proto.Message) error
 	EmitTypedEvents(tevs ...proto.Message) error
@@ -33,14 +34,23 @@ var _ EventManagerI = (*EventManager)(nil)
 // EventManager implements a simple wrapper around a slice of Event objects that
 // can be emitted from.
 type EventManager struct {
-	events Events
+	events      Events
+	typedEvents []proto.Message
 }
 
 func NewEventManager() *EventManager {
-	return &EventManager{EmptyEvents()}
+	em := &EventManager{
+		events:      EmptyEvents(),
+		typedEvents: []proto.Message{},
+	}
+	return em
 }
 
 func (em *EventManager) Events() Events { return em.events }
+
+func (em *EventManager) TypedEvents() []proto.Message {
+	return em.typedEvents
+}
 
 // EmitEvent stores a single Event object.
 // Deprecated: Use EmitTypedEvent
@@ -67,6 +77,8 @@ func (em *EventManager) EmitTypedEvent(tev proto.Message) error {
 	}
 
 	em.EmitEvent(event)
+	em.typedEvents = append(em.typedEvents, tev)
+
 	return nil
 }
 
@@ -82,6 +94,8 @@ func (em *EventManager) EmitTypedEvents(tevs ...proto.Message) error {
 	}
 
 	em.EmitEvents(events)
+	em.typedEvents = append(em.typedEvents, tevs...)
+
 	return nil
 }
 

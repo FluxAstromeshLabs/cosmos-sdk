@@ -169,7 +169,9 @@ func (msr *MsgServiceRouter) registerMsgServiceHandler(sd *grpc.ServiceDesc, met
 	}
 
 	msr.routes[requestTypeName] = func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
-		ctx = ctx.WithEventManager(sdk.NewEventManager())
+		em := sdk.NewEventManager()
+		ctx = ctx.WithEventManager(em)
+
 		interceptor := func(goCtx context.Context, _ interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 			goCtx = context.WithValue(goCtx, sdk.SdkContextKey, ctx)
 			return handler(goCtx, msg)
@@ -203,6 +205,11 @@ func (msr *MsgServiceRouter) registerMsgServiceHandler(sd *grpc.ServiceDesc, met
 		resMsg, ok := res.(proto.Message)
 		if !ok {
 			return nil, errorsmod.Wrapf(sdkerrors.ErrInvalidType, "Expecting proto.Message, got %T", resMsg)
+		}
+
+		// collect events
+		if !ctx.IsCheckTx() {
+			sdk.FluxEventManagerSingleton.AddTxEvents(ctx.EventManager())
 		}
 
 		return sdk.WrapServiceResult(ctx, resMsg, err)

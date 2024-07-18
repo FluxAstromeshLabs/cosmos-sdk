@@ -704,8 +704,12 @@ func (app *BaseApp) beginBlock(req *abci.RequestFinalizeBlock) (sdk.BeginBlock, 
 	if app.beginBlocker != nil {
 		resp, err = app.beginBlocker(app.finalizeBlockState.ctx)
 		if err != nil {
+			sdk.FluxEventManagerSingleton.ClearBeginBlockEvents()
 			return resp, err
 		}
+
+		// flush begin block events to fluxd eventstream
+		sdk.FluxEventManagerSingleton.FlushBeginBlockEvents()
 
 		// append BeginBlock attributes to all events in the EndBlock response
 		for i, event := range resp.Events {
@@ -766,8 +770,12 @@ func (app *BaseApp) endBlock(ctx context.Context) (sdk.EndBlock, error) {
 	if app.endBlocker != nil {
 		eb, err := app.endBlocker(app.finalizeBlockState.ctx)
 		if err != nil {
+			sdk.FluxEventManagerSingleton.ClearEndBlockEvents()
 			return endblock, err
 		}
+
+		// flush end block events to fluxd eventstream
+		sdk.FluxEventManagerSingleton.FlushEndBlockEvents()
 
 		// append EndBlock attributes to all events in the EndBlock response
 		for i, event := range eb.Events {
@@ -810,6 +818,11 @@ func (app *BaseApp) runTx(mode execMode, txBytes []byte) (gInfo sdk.GasInfo, res
 			recoveryMW := newOutOfGasRecoveryMiddleware(gasWanted, ctx, app.runTxRecoveryMiddleware)
 			err, result = processRecovery(r, recoveryMW), nil
 			ctx.Logger().Error("panic recovered in runTx", "err", err)
+			// clear tx events when out of gas error happened
+			sdk.FluxEventManagerSingleton.ClearTxEvents()
+		} else {
+			// flush tx events to flux eventstream
+			sdk.FluxEventManagerSingleton.FlushTxEvents()
 		}
 
 		gInfo = sdk.GasInfo{GasWanted: gasWanted, GasUsed: ctx.GasMeter().GasConsumed()}

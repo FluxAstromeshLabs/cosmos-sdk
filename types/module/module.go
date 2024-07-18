@@ -782,6 +782,9 @@ func (m *Manager) BeginBlock(ctx sdk.Context) (sdk.BeginBlock, error) {
 		}
 	}
 
+	// collect begin blocker events
+	sdk.FluxEventManagerSingleton.AddBeginBlockEvents(ctx.EventManager())
+
 	return sdk.BeginBlock{
 		Events: ctx.EventManager().ABCIEvents(),
 	}, nil
@@ -820,6 +823,9 @@ func (m *Manager) EndBlock(ctx sdk.Context) (sdk.EndBlock, error) {
 			continue
 		}
 	}
+
+	// collect end blocker events
+	sdk.FluxEventManagerSingleton.AddEndBlockEvents(ctx.EventManager())
 
 	return sdk.EndBlock{
 		ValidatorUpdates: validatorUpdates,
