@@ -17,7 +17,7 @@ import (
 
 type EventManagerI interface {
 	Events() Events
-	TypedEvents() []proto.Message
+	GenericEvents() []interface{}
 	ABCIEvents() []abci.Event
 	EmitTypedEvent(tev proto.Message) error
 	EmitTypedEvents(tevs ...proto.Message) error
@@ -34,34 +34,44 @@ var _ EventManagerI = (*EventManager)(nil)
 // EventManager implements a simple wrapper around a slice of Event objects that
 // can be emitted from.
 type EventManager struct {
-	events      Events
-	typedEvents []proto.Message
+	events        Events
+	genericEvents []interface{}
 }
 
 func NewEventManager() *EventManager {
 	em := &EventManager{
-		events:      EmptyEvents(),
-		typedEvents: []proto.Message{},
+		events:        EmptyEvents(),
+		genericEvents: []interface{}{},
 	}
 	return em
 }
 
 func (em *EventManager) Events() Events { return em.events }
 
-func (em *EventManager) TypedEvents() []proto.Message {
-	return em.typedEvents
+func (em *EventManager) GenericEvents() []interface{} {
+	return em.genericEvents
 }
 
 // EmitEvent stores a single Event object.
 // Deprecated: Use EmitTypedEvent
 func (em *EventManager) EmitEvent(event Event) {
 	em.events = em.events.AppendEvent(event)
+	// exclude typed event -> abci event
+	if !strings.Contains(event.Type, ".") {
+		em.genericEvents = append(em.genericEvents, event)
+	}
 }
 
 // EmitEvents stores a series of Event objects.
 // Deprecated: Use EmitTypedEvents
 func (em *EventManager) EmitEvents(events Events) {
 	em.events = em.events.AppendEvents(events)
+	for _, event := range events {
+		// exclude typed events -> abci events
+		if !strings.Contains(event.Type, ".") {
+			em.genericEvents = append(em.genericEvents, event)
+		}
+	}
 }
 
 // ABCIEvents returns all stored Event objects as abci.Event objects.
@@ -77,7 +87,7 @@ func (em *EventManager) EmitTypedEvent(tev proto.Message) error {
 	}
 
 	em.EmitEvent(event)
-	em.typedEvents = append(em.typedEvents, tev)
+	em.genericEvents = append(em.genericEvents, tev)
 
 	return nil
 }
@@ -91,10 +101,10 @@ func (em *EventManager) EmitTypedEvents(tevs ...proto.Message) error {
 			return err
 		}
 		events[i] = res
+		em.genericEvents = append(em.genericEvents, tev)
 	}
 
 	em.EmitEvents(events)
-	em.typedEvents = append(em.typedEvents, tevs...)
 
 	return nil
 }
@@ -126,10 +136,11 @@ func TypedEventToEvent(tev proto.Message) (Event, error) {
 		})
 	}
 
-	return Event{
+	event := Event{
 		Type:       evtType,
 		Attributes: attrs,
-	}, nil
+	}
+	return event, nil
 }
 
 // ParseTypedEvent converts abci.Event back to a typed event.

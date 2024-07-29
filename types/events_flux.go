@@ -1,66 +1,62 @@
 package types
 
-import (
-	"github.com/cosmos/gogoproto/proto"
-)
-
 var EventStreamSingleton interface{}
 
 type EventStreamI interface {
-	EmitCosmosEvents(events ...proto.Message)
+	ForwardEvents(events ...interface{})
 }
 
 type FluxEventManager struct {
-	beginBlockEvents []proto.Message
-	txEvents         []proto.Message
-	endBlockEvents   []proto.Message
+	beginBlockEvents []interface{}
+	txEvents         []interface{}
+	endBlockEvents   []interface{}
 }
 
 func NewFluxEventManager() *FluxEventManager {
 	return &FluxEventManager{
-		beginBlockEvents: []proto.Message{},
-		txEvents:         []proto.Message{},
-		endBlockEvents:   []proto.Message{},
+		beginBlockEvents: []interface{}{},
+		txEvents:         []interface{}{},
+		endBlockEvents:   []interface{}{},
 	}
 }
 
 func (fem *FluxEventManager) AddBeginBlockEvents(em EventManagerI) {
-	fem.beginBlockEvents = append(fem.beginBlockEvents, em.TypedEvents()...)
+	fem.beginBlockEvents = append(fem.beginBlockEvents, em.GenericEvents()...)
 }
 
 func (fem *FluxEventManager) FlushBeginBlockEvents() {
-	EventStreamSingleton.(EventStreamI).EmitCosmosEvents(fem.beginBlockEvents...)
-	fem.beginBlockEvents = []proto.Message{}
+	EventStreamSingleton.(EventStreamI).ForwardEvents(fem.beginBlockEvents...)
+	fem.beginBlockEvents = []interface{}{}
 }
 
 func (fem *FluxEventManager) ClearBeginBlockEvents() {
-	fem.beginBlockEvents = []proto.Message{}
+	fem.beginBlockEvents = []interface{}{}
 }
 
 func (fem *FluxEventManager) AddTxEvents(em EventManagerI) {
-	fem.txEvents = append(fem.txEvents, em.TypedEvents()...)
+	fem.txEvents = append(fem.txEvents, em.GenericEvents()...)
 }
 
 func (fem *FluxEventManager) FlushTxEvents() {
-	EventStreamSingleton.(EventStreamI).EmitCosmosEvents(fem.txEvents...)
-	fem.txEvents = []proto.Message{}
+	EventStreamSingleton.(EventStreamI).ForwardEvents(fem.txEvents...)
+	fem.txEvents = []interface{}{}
 }
 
 func (fem *FluxEventManager) ClearTxEvents() {
-	fem.txEvents = []proto.Message{}
+	fem.txEvents = []interface{}{}
 }
 
 func (fem *FluxEventManager) AddEndBlockEvents(em EventManagerI) {
-	fem.endBlockEvents = append(fem.endBlockEvents, em.TypedEvents()...)
+	fem.endBlockEvents = append(fem.endBlockEvents, em.GenericEvents()...)
 }
 
 func (fem *FluxEventManager) FlushEndBlockEvents() {
-	EventStreamSingleton.(EventStreamI).EmitCosmosEvents(fem.endBlockEvents...)
-	fem.endBlockEvents = []proto.Message{}
+	EventStreamSingleton.(EventStreamI).ForwardEvents(fem.endBlockEvents...)
+	fem.endBlockEvents = []interface{}{}
 }
 
 func (fem *FluxEventManager) ClearEndBlockEvents() {
-	fem.endBlockEvents = []proto.Message{}
+	fem.endBlockEvents = []interface{}{}
 }
 
 var FluxEventManagerSingleton = NewFluxEventManager()
