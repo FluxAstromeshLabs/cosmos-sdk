@@ -818,6 +818,9 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 		return nil, err
 	}
 
+	// notifying all events are flushed
+	sdk.FluxEventManagerSingleton.Finalize()
+
 	// check after endBlock if we should abort, to avoid propagating the result
 	select {
 	case <-ctx.Done():
