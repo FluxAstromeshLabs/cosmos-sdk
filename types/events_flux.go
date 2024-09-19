@@ -4,7 +4,7 @@ var EventStreamSingleton interface{}
 
 type EventStreamI interface {
 	ForwardEvents(events ...interface{})
-	Finalize()
+	Finalize() error
 }
 
 type FluxEventManager struct {
@@ -60,8 +60,8 @@ func (fem *FluxEventManager) ClearEndBlockEvents() {
 	fem.endBlockEvents = []interface{}{}
 }
 
-func (fem *FluxEventManager) Finalize() {
-	EventStreamSingleton.(EventStreamI).Finalize()
+func (fem *FluxEventManager) Finalize() error {
+	return EventStreamSingleton.(EventStreamI).Finalize()
 }
 
 var FluxEventManagerSingleton = NewFluxEventManager()

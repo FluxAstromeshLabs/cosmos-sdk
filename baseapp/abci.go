@@ -819,7 +819,9 @@ func (app *BaseApp) internalFinalizeBlock(ctx context.Context, req *abci.Request
 	}
 
 	// notifying all events are flushed
-	sdk.FluxEventManagerSingleton.Finalize()
+	if err := sdk.FluxEventManagerSingleton.Finalize(); err != nil {
+		return nil, fmt.Errorf("finalize event err: %w", err)
+	}
 
 	// check after endBlock if we should abort, to avoid propagating the result
 	select {
