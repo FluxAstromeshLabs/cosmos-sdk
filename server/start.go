@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/FluxAstromeshLabs/cometbft-plugin/hotstuff"
 	"io"
 	"net"
 	"os"
@@ -409,6 +410,7 @@ func startCmtNode(
 		cmtcfg.DefaultDBProvider,
 		node.DefaultMetricsProvider(cfg.Instrumentation),
 		servercmtlog.CometLoggerWrapper{Logger: svrCtx.Logger},
+		node.CustomReactors(map[string]p2p.Reactor{"HOTSTUFF_TEST": hotstuff.NewHotstuffReactor()}),
 	)
 	if err != nil {
 		return tmNode, cleanupFn, err
