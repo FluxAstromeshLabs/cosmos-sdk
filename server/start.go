@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/FluxAstromeshLabs/cometbft-plugin/hotstuff"
+	"github.com/cosmos/cosmos-sdk/types/consensusplugin"
 	"io"
 	"net"
 	"os"
@@ -399,6 +399,11 @@ func startCmtNode(
 		return nil, cleanupFn, err
 	}
 
+	cmtOpts := []node.Option{}
+	if consensusplugin.ReactorPluginSingleton != nil {
+		cmtOpts = append(cmtOpts, node.CustomReactors(consensusplugin.ReactorPluginSingleton.GetReactors()))
+	}
+
 	cmtApp := NewCometABCIWrapper(app)
 	tmNode, err = node.NewNodeWithContext(
 		ctx,
@@ -410,7 +415,7 @@ func startCmtNode(
 		cmtcfg.DefaultDBProvider,
 		node.DefaultMetricsProvider(cfg.Instrumentation),
 		servercmtlog.CometLoggerWrapper{Logger: svrCtx.Logger},
-		node.CustomReactors(map[string]p2p.Reactor{"HOTSTUFF_TEST": hotstuff.NewHotstuffReactor()}),
+		cmtOpts...,
 	)
 	if err != nil {
 		return tmNode, cleanupFn, err

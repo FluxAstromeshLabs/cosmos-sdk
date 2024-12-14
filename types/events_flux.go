@@ -1,11 +1,11 @@
 package types
 
-var EventStreamSingleton interface{}
-
 type EventStreamI interface {
 	ForwardEvents(events ...interface{})
 	FinalizeEvents() error
 }
+
+var EventStreamSingleton EventStreamI
 
 type FluxEventManager struct {
 	beginBlockEvents []interface{}
@@ -26,7 +26,7 @@ func (fem *FluxEventManager) AddBeginBlockEvents(em EventManagerI) {
 }
 
 func (fem *FluxEventManager) FlushBeginBlockEvents() {
-	EventStreamSingleton.(EventStreamI).ForwardEvents(fem.beginBlockEvents...)
+	EventStreamSingleton.ForwardEvents(fem.beginBlockEvents...)
 	fem.beginBlockEvents = []interface{}{}
 }
 
@@ -39,7 +39,7 @@ func (fem *FluxEventManager) AddTxEvents(em EventManagerI) {
 }
 
 func (fem *FluxEventManager) FlushTxEvents() {
-	EventStreamSingleton.(EventStreamI).ForwardEvents(fem.txEvents...)
+	EventStreamSingleton.ForwardEvents(fem.txEvents...)
 	fem.txEvents = []interface{}{}
 }
 
@@ -52,7 +52,7 @@ func (fem *FluxEventManager) AddEndBlockEvents(em EventManagerI) {
 }
 
 func (fem *FluxEventManager) FlushEndBlockEvents() {
-	EventStreamSingleton.(EventStreamI).ForwardEvents(fem.endBlockEvents...)
+	EventStreamSingleton.ForwardEvents(fem.endBlockEvents...)
 	fem.endBlockEvents = []interface{}{}
 }
 
@@ -61,7 +61,7 @@ func (fem *FluxEventManager) ClearEndBlockEvents() {
 }
 
 func (fem *FluxEventManager) FinalizeEvents() error {
-	return EventStreamSingleton.(EventStreamI).FinalizeEvents()
+	return EventStreamSingleton.FinalizeEvents()
 }
 
 var FluxEventManagerSingleton = NewFluxEventManager()
